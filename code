@@ -1,0 +1,145 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+
+using namespace std;
+
+class Racer {
+private:
+    string horseName;
+    string jockeyName;
+    double horseWeight;
+    double jockeyWeight;
+    int horseAge;
+    char horseGender;
+    bool defeatStatus;
+    bool injuryStatus;
+    bool eligibility;
+
+public:
+    // Default constructor
+    Racer() : horseName("Unnamed Horse"), jockeyName("Unnamed Jockey"), horseWeight(0.0), jockeyWeight(0.0), horseAge(0), horseGender('M'), defeatStatus(false), injuryStatus(false), eligibility(true) {}
+
+    // Custom constructor
+    Racer(string hName, string jName, double hWeight, double jWeight, int hAge, char hGender)
+        : horseName(hName), jockeyName(jName), horseWeight(hWeight), jockeyWeight(jWeight), horseAge(hAge), horseGender(hGender), defeatStatus(false), injuryStatus(false), eligibility(true) {}
+
+    // Display Racer details
+    void displayInfo() const {
+        cout << "Horse: " << horseName << endl;
+        cout << "Jockey: " << jockeyName << endl;
+        cout << "Horse's Weight: " << horseWeight << endl;
+        cout << "Jockey's Weight: " << jockeyWeight << endl;
+        cout << "Horse's Age: " << horseAge << endl;
+        cout << "Gender: " << horseGender << endl;
+        cout << "Defeated: " << (defeatStatus ? "Yes" : "No") << endl;
+        cout << "Injured: " << (injuryStatus ? "Yes" : "No") << endl;
+        cout << "Eligible to Race: " << (eligibility ? "Yes" : "No") << endl;
+    }
+
+    // Function to age the horse and determine injury risk
+    void increaseAge() {
+        horseAge++;
+        cout << horseName << " is now " << horseAge << " years old." << endl;
+
+        // Injury probability based on age group
+        if (horseAge < 6) {
+            if (rand() % 100 < 25) {
+                injuryStatus = true;
+                eligibility = false;
+                cout << horseName << " got injured and can't race." << endl;
+            }
+        } else if (horseAge <= 13) {
+            if (rand() % 100 < 3) {
+                injuryStatus = true;
+                eligibility = false;
+                cout << horseName << " got injured and can't race." << endl;
+            }
+        } else {
+            if (rand() % 100 < 80) {
+                eligibility = false;
+                cout << horseName << " is too old to compete." << endl;
+            }
+        }
+    }
+
+    // Race function between two racers
+    void compete(Racer &opponent) {
+        if (!eligibility || injuryStatus) {
+            cout << horseName << " cannot participate in the race." << endl;
+            return;
+        }
+
+        if (!opponent.eligibility || opponent.injuryStatus) {
+            cout << opponent.horseName << " cannot participate in the race." << endl;
+            return;
+        }
+
+        double performanceRatio = ((horseWeight + jockeyWeight) / (opponent.horseWeight + opponent.jockeyWeight)) * 50;
+        int raceOutcome = rand() % 100 + 1;
+
+        if (raceOutcome < performanceRatio) {
+            cout << horseName << " wins the race against " << opponent.horseName << "!" << endl;
+            opponent.defeatStatus = true;
+        } else {
+            cout << opponent.horseName << " wins the race against " << horseName << "!" << endl;
+            defeatStatus = true;
+        }
+    }
+
+    // Getter and Setter functions
+    string getHorseName() const { return horseName; }
+    void setHorseName(string hName) { horseName = hName; }
+
+    string getJockeyName() const { return jockeyName; }
+    void setJockeyName(string jName) { jockeyName = jName; }
+
+    double getHorseWeight() const { return horseWeight; }
+    void setHorseWeight(double hWeight) { horseWeight = hWeight; }
+
+    double getJockeyWeight() const { return jockeyWeight; }
+    void setJockeyWeight(double jWeight) { jockeyWeight = jWeight; }
+
+    int getHorseAge() const { return horseAge; }
+    void setHorseAge(int hAge) { horseAge = hAge; }
+
+    char getHorseGender() const { return horseGender; }
+    void setHorseGender(char hGender) { horseGender = hGender; }
+
+    bool isDefeated() const { return defeatStatus; }
+    bool isInjured() const { return injuryStatus; }
+    bool isEligible() const { return eligibility; }
+};
+
+// Driver function
+int main() {
+    srand((unsigned int)time(0));  // Seed random number generator
+
+    // Create two racers with custom values
+    Racer racer1("Seabiscuit", "Nick", 520.0, 80.0, 4, 'M');
+    Racer racer2("Bandit", "George", 490.0, 75.0, 8, 'F');
+
+    // Display initial info for both racers
+    cout << "Initial details of the racers:" << endl;
+    racer1.displayInfo();
+    cout << endl;
+    racer2.displayInfo();
+    cout << endl;
+
+    racer1.increaseAge();
+    cout << endl;
+
+    // Simulate a race between the two horses
+    cout << "Racing Seabiscuit and Bandit" << endl;
+    racer1.compete(racer2);
+    cout << endl;
+
+    // Show final status of both racers, with Storm's age increased by 1
+    cout << "Final details after the race:" << endl;
+    racer1.displayInfo();
+    cout << endl;
+    racer2.displayInfo();
+
+    return 0;
+}
